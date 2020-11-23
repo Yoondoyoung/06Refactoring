@@ -77,6 +77,7 @@ public class PurchaseController {
 		purchase.setPurchaseProd(productService.getProduct(Integer.parseInt(request.getParameter("prodNo"))));
 		System.out.println(purchase);
 		purchaseService.addPurchase(purchase);
+		purchase = purchaseService.getPurchase2(Integer.parseInt(request.getParameter("prodNo")));
 		model.addAttribute("purchase",purchase);
 		return "forward:/purchase/AddPurchase.jsp";
 	}

@@ -52,7 +52,7 @@
 		resultMap="productSelectMap">
 		SELECT * FROM ( SELECT inner_table.* ,  ROWNUM AS row_seq  
 						FROM (SELECT p.prod_no,p.prod_name,p.price,p.reg_date,t.tran_status_code
-									from product p, transaction t 
+									from product p, transaction t where p.prod_no=t.prod_no(+)
 		<if test="searchCondition != null">
 			<where>
 				<if test="searchCondition == 0 and searchKeyword !='' ">
@@ -74,7 +74,7 @@
 				order by price desc
 			</if>
 		</if>
-		where p.prod_no=t.prod_no(+) ) inner_table
+		 ) inner_table
 		WHERE ROWNUM &lt;= #{endRowNum} )
 		WHERE row_seq BETWEEN
 		#{startRowNum} AND
@@ -89,15 +89,15 @@
 	<select id="getTotalCount" parameterType="search"
 		resultType="int">
 		SELECT COUNT(*)
-		FROM( SELECT user_id , user_name , email
-		FROM users
+		FROM( SELECT prod_no , prod_name , price
+		FROM product
 		<if test="searchCondition != null">
 			<where>
 				<if test="searchCondition == 0 and searchKeyword !='' ">
-					user_id = #{searchKeyword}
+					prod_no = #{searchKeyword}
 				</if>
 				<if test="searchCondition == 1 and searchKeyword !='' ">
-					user_name = #{searchKeyword}
+					prod_name = #{searchKeyword}
 				</if>
 			</where>
 		</if>

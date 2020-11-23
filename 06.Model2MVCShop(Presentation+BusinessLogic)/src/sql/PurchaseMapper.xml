@@ -11,6 +11,12 @@
 		<result property="tranNo" column="TRAN_NO" jdbcType="INTEGER" />
 		<result property="purchaseProd.prodNo" column="PROD_NO"
 			jdbcType="INTEGER" />
+			<result property="purchaseProd.prodName" column="PROD_NAME"
+			jdbcType="VARCHAR" />
+			<result property="purchaseProd.regDate" column="REG_DATE"
+			jdbcType="DATE" />
+			<result property="purchaseProd.price" column="PRICE"
+			jdbcType="INTEGER" />
 		<result property="buyer.userId" column="BUYER_ID"
 			jdbcType="VARCHAR" />
 		<result property="buyer.userName" column="user_name"/>
@@ -91,17 +97,17 @@
 	<select id="getSaleList" parameterType="map" resultMap="purchaseSelectMap">
 		SELECT * FROM ( SELECT inner_table.* ,  ROWNUM AS row_seq  
 						FROM (SELECT p.prod_no,p.prod_name,p.price,p.reg_date,t.tran_status_code
-									from product p, transaction t 
+									from product p, transaction t where p.prod_no=t.prod_no(+)
 		<if test="searchCondition != null">
 			<where>
 				<if test="searchCondition == 0 and searchKeyword !='' ">
-					prod_no = #{searchKeyword}
+					prod_no = #{search.searchKeyword}
 				</if>
 				<if test="searchCondition == 1 and searchKeyword !='' ">
-					prod_name like '%'||#{searchKeyword}||'%'
+					prod_name like '%'||#{search.searchKeyword}||'%'
 				</if>
 				<if test="searchCondition == 2 and searchKeyword !='' ">
-					price = #{searchKeyword}
+					price = #{search.searchKeyword}
 				</if>
 			</where>
 		</if>
@@ -113,11 +119,11 @@
 				order by price desc
 			</if>
 		</if>
-		where p.prod_no=t.prod_no(+) ) inner_table
-		WHERE ROWNUM &lt;= #{endRowNum} )
+		 ) inner_table
+		WHERE ROWNUM &lt;= #{search.endRowNum} )
 		WHERE row_seq BETWEEN
-		#{startRowNum} AND
-		#{endRowNum}
+		#{search.startRowNum} AND
+		#{search.endRowNum}
 	</select>
 		
 

@@ -141,31 +141,47 @@
 						<c:choose>
 							<c:when test="${menu=='manage'}">
 								<td align="left"><a
-									href="/updateProductView.do?prodNo=${product.prodNo}&menu=${menu=='manage' ? 'manage' : 'search' }">${product.prodName}</a>
+									href="/updateProductView.do?prodNo=${product.purchaseProd}&menu=${menu=='manage' ? 'manage' : 'search' }">${product.purchaseProd.prodName}</a>
 								</td>
+								<td></td>
+								<td align="left">${product.purchaseProd.price}</td>
+								<td></td>
+								<td align="left">${product.purchaseProd.regDate}</td>
+								<td></td>
+								<c:if test="${fn:trim(product.tranCode)==''}">
+									<td align="left">판매중</td>
+								</c:if>
+								<c:if test="${fn:trim(product.tranCode)=='1' }">
+									<td align="left">구매완료 <a
+										href="/updateTranCodeByProd.do?prodNo=${product.purchaseProd.prodNo }&tranCode=2">배송하기</a></td>
+								</c:if>
+								<c:if
+									test="${fn:trim(product.tranCode)=='2' || fn:trim(product.tranCode)=='3' }">
+									<td align="left">재고없음</td>
+								</c:if>
 							</c:when>
 							<c:when test="${menu=='search'}">
 								<td align="left"><a
 									href="/getProduct.do?prodNo=${product.prodNo}">${product.prodName}</a>
 								</td>
-							</c:when>
+								<td></td>
+								<td align="left">${product.price}</td>
+								<td></td>
+								<td align="left">${product.regDate}</td>
+								<td></td>
+								<c:if test="${fn:trim(product.proTranCode)==''}">
+									<td align="left">판매중</td>
+								</c:if>
+								<c:if test="${fn:trim(product.proTranCode)=='1' }">
+									<td align="left">재고없음</td>
+								</c:if>
+								<c:if
+									test="${fn:trim(product.proTranCode)=='2' || fn:trim(product.proTranCode)=='3' }">
+									<td align="left">재고없음</td>
+								</c:if>
+									</c:when>
 						</c:choose>
-						<td></td>
-						<td align="left">${product.price}</td>
-						<td></td>
-						<td align="left">${product.regDate}</td>
-						<td></td>
-						<c:if test="${fn:trim(product.proTranCode)==''}">
-							<td align="left">판매중</td>
-						</c:if>
-						<c:if test="${fn:trim(product.proTranCode)=='1' }">
-							<td align="left">구매완료 <a
-								href="/updateTranCodeByProd.do?prodNo=${product.prodNo }&tranCode=2">배송하기</a></td>
-						</c:if>
-						<c:if
-							test="${fn:trim(product.proTranCode)=='2' || fn:trim(product.proTranCode)=='3' }">
-							<td align="left">재고없음</td>
-						</c:if>
+						
 
 					</tr>
 					<tr>
