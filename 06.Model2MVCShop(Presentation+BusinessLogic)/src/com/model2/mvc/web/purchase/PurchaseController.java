@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import com.model2.mvc.service.domain.Product;
 import com.model2.mvc.service.domain.Purchase;
 import com.model2.mvc.service.domain.User;
 import com.model2.mvc.service.product.ProductService;
+import com.model2.mvc.service.product.impl.ProductServiceImpl;
 import com.model2.mvc.service.purchase.PurchaseService;
 import com.model2.mvc.service.purchase.impl.PurchaseServiceImpl;
 import com.model2.mvc.service.user.UserService;
@@ -180,5 +182,59 @@ public class PurchaseController {
 		model.addAttribute("menu",menu);
 		
 		return "forward:/purchase/listProduct.jsp";
+	}
+	@RequestMapping("updateTranCodeByProd.do")
+	public String updateTranCodeByProd(@RequestParam("prodNo") int prodNo,
+										@RequestParam("tranCode")String tranCo,
+										@ModelAttribute("search")Search search,
+										Model model , HttpServletRequest request) throws Exception {
+		
+		search.setCurrentPage(1);
+		
+		search.setSearchCondition(request.getParameter("searchCondition"));
+		search.setSearchKeyword(request.getParameter("searchKeyword"));
+		search.setPageSize(pageSize);
+		Purchase purchase = new Purchase();
+		purchase = purchaseService.getPurchase2(prodNo);
+		purchase.setTranCode(tranCo);
+		purchaseService.updateTranCode(purchase);
+		Map<String, Object> map = purchaseService.getSaleList(search);
+		Page resultPage = new Page( search.getCurrentPage(), ((Integer)map.get("totalCount")).intValue(), pageUnit, pageSize);
+		System.out.println(resultPage);
+		model.addAttribute("list", map.get("list"));
+		model.addAttribute("resultPage", resultPage);
+		model.addAttribute("search", search);
+		model.addAttribute("menu","manage");
+		return "forward:/product/listProduct.jsp";
+	}
+	@RequestMapping("updateTranCode.do")
+	public String updateTranCode(@RequestParam("tranNo") int tranNo,
+									@RequestParam("tranCode")String tranCo,
+									@ModelAttribute("search")Search search,
+									Model model , HttpServletRequest request) throws Exception {
+		// TODO Auto-generated method stub
+		HttpSession session = request.getSession();
+		User user = (User) session.getAttribute("user");
+		
+		search.setCurrentPage(1);
+		
+		search.setSearchCondition(request.getParameter("searchCondition"));
+		search.setSearchKeyword(request.getParameter("searchKeyword"));
+		search.setPageSize(pageSize);
+		
+		
+		
+		Purchase purchase = new Purchase();
+		
+		purchase.setTranCode(tranCo);
+		purchase.setTranNo(tranNo);
+		purchaseService.updateTranCode(purchase);
+		Map<String, Object> map = purchaseService.getPurchaseList(search, user.getUserId());
+		Page resultPage = new Page( search.getCurrentPage(), ((Integer)map.get("totalCount")).intValue(), pageUnit, pageSize);
+		System.out.println(resultPage);
+		model.addAttribute("list", map.get("list"));
+		model.addAttribute("resultPage", resultPage);
+		model.addAttribute("search", search);
+		return "forward:/purchase/GetPurchaseList.jsp";
 	}
 }

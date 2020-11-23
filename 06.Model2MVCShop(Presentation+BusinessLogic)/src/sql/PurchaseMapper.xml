@@ -145,5 +145,23 @@
 		</if>
 		) countTable
 	</select>
+	
+	<select id="getTotalCount2" parameterType="search"
+		resultType="int">
+		SELECT COUNT(*)
+		FROM( SELECT prod_no , prod_name , price
+		FROM product
+		<if test="searchCondition != null">
+			<where>
+				<if test="searchCondition == 0 and searchKeyword !='' ">
+					prod_no = #{searchKeyword}
+				</if>
+				<if test="searchCondition == 1 and searchKeyword !='' ">
+					prod_name = #{searchKeyword}
+				</if>
+			</where>
+		</if>
+		) countTable
+	</select>
 
 </mapper>
